@@ -1,0 +1,48 @@
+{
+  "dashboard": {
+    "title": "Simple Kubernetes Dashboard",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Prometheus Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Scrape Duration",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "prometheus_target_interval_length_seconds",
+            "refId": "A",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      }
+    ],
+    "refresh": "5s",
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    }
+  },
+  "overwrite": true
+}

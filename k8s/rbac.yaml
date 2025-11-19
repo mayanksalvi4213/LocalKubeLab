@@ -1,0 +1,42 @@
+# Namespace for the application
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: deployment-system
+---
+# ServiceAccount for deployments
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: deployer
+  namespace: deployment-system
+---
+# ClusterRole with necessary permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: deployer-role
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["services", "pods"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+---
+# ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: deployer-binding
+subjects:
+  - kind: ServiceAccount
+    name: deployer
+    namespace: deployment-system
+roleRef:
+  kind: ClusterRole
+  name: deployer-role
+  apiGroup: rbac.authorization.k8s.io

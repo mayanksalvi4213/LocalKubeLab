@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GitHub to K8s Deployer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2> K8s Deployer</h2>
+            </div>
+            <div class="nav-user">
+                {% if user %}
+                <img src="{{ user.avatar_url }}" alt="{{ user.login }}" class="user-avatar">
+                <span class="user-name">{{ user.name or user.login }}</span>
+                <a href="/logout" class="btn btn-secondary btn-small">Logout</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-tab="repositories">
+                    <span class="icon">📦</span>
+                    Repositories
+                </li>
+                <li class="menu-item" data-tab="deployments">
+                    <span class="icon">☸️</span>
+                    Deployments
+                </li>
+                <li class="menu-item" data-tab="monitoring">
+                    <span class="icon">📊</span>
+                    Monitoring
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <!-- Repositories Tab -->
+            <div id="repositories-tab" class="tab-content active">
+                <div class="content-header">
+                    <h2>Select Repository to Deploy</h2>
+                    <button id="refresh-repos" class="btn btn-secondary">
+                        <span class="icon">🔄</span> Refresh
+                    </button>
+                </div>
+                
+                <div class="search-box">
+                    <input type="text" id="repo-search" placeholder="Search repositories..." />
+                </div>
+
+                <div id="repos-loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading repositories...</p>
+                </div>
+
+                <div id="repos-container" class="repos-grid"></div>
+            </div>
+
+            <!-- Deployments Tab -->
+            <div id="deployments-tab" class="tab-content">
+                <div class="content-header">
+                    <h2>Active Deployments</h2>
+                    <button id="refresh-deployments" class="btn btn-secondary">
+                        <span class="icon">🔄</span> Refresh
+                    </button>
+                </div>
+
+                <div id="deployments-loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading deployments...</p>
+                </div>
+
+                <div id="deployments-container" class="deployments-grid"></div>
+            </div>
+
+            <!-- Monitoring Tab -->
+            <div id="monitoring-tab" class="tab-content">
+                <div class="content-header">
+                    <h2>Monitoring Dashboard</h2>
+                </div>
+
+                <div class="monitoring-links">
+                    <div class="monitor-card">
+                        <h3>📊 Prometheus</h3>
+                        <p>Metrics and monitoring</p>
+                        <a href="http://localhost:30090" target="_blank" class="btn btn-primary">
+                            Open Prometheus
+                        </a>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px;">
+                            Port: 30090 (NodePort)
+                        </p>
+                    </div>
+                    <div class="monitor-card">
+                        <h3>📈 Grafana</h3>
+                        <p>Visualization dashboards</p>
+                        <a href="http://localhost:30030" target="_blank" class="btn btn-primary">
+                            Open Grafana
+                        </a>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px;">
+                            Port: 30030 (NodePort)<br>
+                            Login: admin/admin
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Deploy Modal -->
+    <div id="deploy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Deploying...</h2>
+            <div id="deploy-status">
+                <div class="deploy-stage" id="stage-docker">
+                    <span class="stage-icon">⏳</span>
+                    <span class="stage-text">Building Docker image...</span>
+                </div>
+                <div class="deploy-stage" id="stage-push">
+                    <span class="stage-icon">⏳</span>
+                    <span class="stage-text">Pushing to Docker Hub...</span>
+                </div>
+                <div class="deploy-stage" id="stage-k8s">
+                    <span class="stage-icon">⏳</span>
+                    <span class="stage-text">Deploying to Kubernetes...</span>
+                </div>
+            </div>
+            <div id="deploy-result" class="hidden"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
